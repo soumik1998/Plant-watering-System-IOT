@@ -1,0 +1,274 @@
+<!doctype html>
+<html lang="en">
+<head>
+    {% load staticfiles %}
+  <meta charset="utf-8" />
+  <link rel="apple-touch-icon" sizes="76x76" href="{% static 'Plant/signup_login/assets/img/apple-icon.png' %}">
+  <link rel="icon" type="image/png" href="{% static 'Plant/signup_login/assets/img/favicon.png' %}">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+
+  <title>Graph</title>
+
+  <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+
+  <!--     Fonts and icons     -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" />
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css" />
+
+  <!-- CSS Files -->
+    <link href="{% static 'Plant/signup_login/assets/css/bootstrap.min.css' %}" rel="stylesheet" />
+    <link href="{% static 'Plant/signup_login/assets/css/material-kit.css' %}" rel="stylesheet"/>
+    <link href="{% static 'Plant/signup_login/assets/css/css3w.css' %}" rel="stylesheet"/>
+
+</head>
+
+<body class="landing-page">
+    <nav class="navbar navbar-transparent navbar-absolute">
+      <div class="container">
+          <!-- Brand and toggle get grouped for better mobile display -->
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navigation-example">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand">GRAPHS</a>
+          </div>
+
+      </div>
+    </nav>
+
+    <div class="wrapper">
+        <div class="header header-filter" style="background-image: url('{% static 'Plant/signup_login/assets/img/examples/sensor_back.jpeg' %}'); height:300px;">
+
+        </div>
+
+    <div class="main main-raised w3-animate-bottom">
+                <div style="height:30px"> </div>
+                    <center>
+                        <div id="temp_chart" style="width: 900px; height: 500px"></div>
+                        <div id="SoilMoisture_chart" style="width: 900px; height: 500px"></div>
+                    </center>
+    </div>
+
+    <footer class="footer">
+          <div class="container" style="height: 40px;">
+         </div>
+      </footer>
+
+
+    <div class="main main-raised" style="height: 550px; overflow:scroll;">
+      <div class="container">
+                <div style="height:30px"> </div>
+                <div class="row">
+                    <div class="col-md-6 col-md-offset-3">
+                        <div class="profile-tabs">
+                            <div class="nav-align-center">
+                                <ul class="nav nav-pills" role="tablist">
+                                    <li class="active w3-animate-left">
+                                        <a href="#studio" role="tab" data-toggle="tab">
+                                            <i class="material-icons">brightness_low</i>
+                                            Temperature
+                                        </a>
+                                        <br>
+                                    </li>
+                                    <li class="w3-animate-right">
+                                        <a href="#work" role="tab" data-toggle="tab">
+                                            <i class="material-icons">select_all</i>
+                                            Soil Moisture
+                                        </a>
+                                        <br>
+                                    </li>
+                                </ul>
+
+                                <div class="tab-content gallery">
+                                    <div class="tab-pane active" id="studio">
+                                      {% if temp_list %}
+                              {% for db in temp_list %}
+                                    <p style="font-size: 20px;"><b>{{db.dt}} &emsp;&emsp;&emsp;&emsp;&emsp;&emsp; {{db.temp}}</b></p><br>
+                                            {% endfor %}
+                            {%else%}
+                              <p> no data available </p>
+                            {% endif %}
+                                    </div>
+                                    <div class="tab-pane text-center" id="work">
+                                      {% if temp_list %}
+                              {% for db in soil_list %}
+                                <p style="font-size: 20px;"><b>{{db.dt}} &emsp;&emsp;&emsp;&emsp;&emsp;&emsp; {{db.m_level}}</b></p><br>
+                              {% endfor %}
+                            {%else%}
+                              <p> no data available </p>
+                            {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- End Profile Tabs -->
+                    </div>
+          </div>
+    </div>
+  </div>
+
+      <footer class="footer">
+          <div class="container">
+         </div>
+      </footer>
+
+  </div>
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
+    <script type="text/javascript">
+      google.charts.load('current', {'packages':['corechart']});
+
+      var new_temp,new_moist,flag0=0,flag2=0,po=2,x=0,c;
+      {% for q in soil_list%}
+            if(x==0)
+              x=x+1;
+              c={{q.m_level}};
+        {% endfor %}
+         if(c<15) po=3;
+      function fn(){
+       var spreadsheetId = "1eWo3wHLBqLJoJGAFkAqKp7AnmjwC2xOoP4V9qhmHuWc",
+    url = "https://spreadsheets.google.com/feeds/list/" +
+          spreadsheetId +
+          "/od6/public/basic?alt=json";
+
+var cs=$.get({
+  url: url,
+  success: function(response) {
+
+	var data1 = response.feed.entry;
+	new_temp=parseFloat(data1[0].content.$t.replace('values: ', ''));
+	new_moist=parseFloat(data1[po].content.$t.replace('values: ', ''));
+
+  }
+});
+ }
+      google.charts.setOnLoadCallback(drawTempChart);
+      google.charts.setOnLoadCallback(drawSoilMoistureChart);
+      
+      function drawTempChart() {
+        var data = google.visualization.arrayToDataTable([
+          ['Year', 'Temperature'],
+          ['17',30]
+        ]);
+        data.removeRow(0);
+
+        {% for temps in temp_list %}
+            data.addRow(['17',{{temps.temp}}]);
+        {% endfor %}
+
+
+        var options = {
+          animation: {"startup": true,
+                      duration: 1000,
+                      easing: 'linear',},
+          pointSize: 10,
+          pointShape: 'circle',
+          title: 'Recent Temperature',
+          vAxis: {title: "Temperature"},
+          hAxis: {title: "Year"},
+          <!--lineWidth: 4,>
+          <!--curveType: 'function',>
+
+          legend: { position: 'top' },
+          colors: ['#FF671C']
+        };
+
+        var chart = new google.visualization.AreaChart(document.getElementById('temp_chart'));
+
+        var c1=0;
+        function fdraw(){
+		if(c1==1)
+		data.addRow(['17',new_temp]);
+		chart.draw(data, options);
+        data.removeRow(0);
+		fn();
+		c1=1;
+        }
+        fdraw();
+
+
+  window.setInterval(fdraw, 3000);
+
+
+      }
+
+
+      <!-- window.setInterval(drawTempChart, 3000);-->
+
+
+      function drawSoilMoistureChart() {
+        var data = google.visualization.arrayToDataTable([
+          ['Time', 'Soil Moisture'],
+          ['17',30]
+        ]);
+        data.removeRow(0);
+
+        {% for q in soil_list%}
+            data.addRow(['17',{{q.m_level}}]);
+        {% endfor %}
+
+
+        var options = {
+          animation: {"startup": true,
+                      duration: 1000,
+                      easing: 'in',},
+          pointSize: 10,
+          pointShape: 'circle',
+          title: 'Soil Moisture',
+          vAxis: {title: "Soil Moisture"},
+          hAxis: {title: "Year"},
+          <!--lineWidth: 4,>
+          <!--curveType: 'function',>
+
+          legend: { position: 'top' },
+          colors: ['#3BFC1C']
+        };
+
+        var chart = new google.visualization.AreaChart(document.getElementById('SoilMoisture_chart'));
+
+        var c2=0;
+        function fdraw(){
+		if(c2==1)
+		data.addRow(['17',new_moist]);
+		chart.draw(data, options);
+        data.removeRow(0);
+		c2=1;
+        }
+        fdraw();
+
+
+  window.setInterval(fdraw, 3000);
+
+      }
+
+      
+
+    </script>
+
+
+
+
+
+
+</body>
+
+  <!--   Core JS Files   -->
+
+  <script src="{% static 'Plant/signup_login/assets/js/bootstrap.min.js' %}" type="text/javascript"></script>
+  <script src="{% static 'Plant/signup_login/assets/js/material.min.js' %}"></script>
+
+  <!--  Plugin for the Sliders, full documentation here: http://refreshless.com/nouislider/ -->
+  <script src="{% static 'Plant/signup_login/assets/js/nouislider.min.js' %}" type="text/javascript"></script>
+
+  <!--  Plugin for the Datepicker, full documentation here: http://www.eyecon.ro/bootstrap-datepicker/ -->
+  <script src="{% static 'Plant/signup_login/assets/js/bootstrap-datepicker.js' %}" type="text/javascript"></script>
+
+  <!-- Control Center for Material Kit: activating the ripples, parallax effects, scripts from the example pages etc -->
+  <script src="{% static 'Plant/signup_login/assets/js/material-kit.js' %}" type="text/javascript"></script>
+
+</html>

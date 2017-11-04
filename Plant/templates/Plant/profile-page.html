@@ -1,0 +1,584 @@
+<!doctype html>
+<html lang="en">
+<head>
+    {% load staticfiles %}
+    <meta charset="utf-8"/>
+    <link rel="apple-touch-icon" sizes="76x76" href="{% static 'Plant/signup_login/assets/img/apple-icon.png' %}">
+    <link rel="icon" type="image/png" href="{% static 'Plant/signup_login/assets/img/favicon.png' %}">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #mapCanvas {
+        height: 100%;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 10;
+        padding: 0;
+      }
+
+    </style>
+
+
+    <title>Profile Page</title>
+
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport'/>
+
+    <!--     Fonts and icons     -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons"/>
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css"/>
+
+    <!-- CSS Files -->
+    <link href="{% static 'Plant/signup_login/assets/css/bootstrap.min.css' %}" rel="stylesheet"/>
+    <link href="{% static 'Plant/signup_login/assets/css/material-kit.css' %}" rel="stylesheet"/>
+    <link href="{% static 'Plant/signup_login/assets/css/css3w.css' %}" rel="stylesheet"/>
+    <link href="{% static 'Plant/signup_login/assets/css/form.css' %}" rel="stylesheet">
+
+</head>
+
+<body class="profile-page">
+<nav class="navbar navbar-transparent navbar-fixed-top navbar-color-on-scroll">
+    <div class="container">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+        </div>
+
+        <div class="collapse navbar-collapse" id="navigation-example">
+            <ul class="nav navbar-nav navbar-left">
+                <li><a href="{% url 'Plant:home' name %}"><i class="material-icons"
+                                                             style="font-size: 38px;">home</i></a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li class="dropdown">
+        			<a href="#" class="dropdown-toggle navbar-brand" data-toggle="dropdown" style="font-size:20px;" ><i class="material-icons">spa</i>&nbsp;<b>PLANTS</b></a>
+        			<ul class="dropdown-menu">
+                        {% for pt in plant_list %}
+					        <li><a href="{% url 'Plant:userPlants' name pt.plant_name %}" style="font-size:15px;">{{pt.plant_name}}</a></li>
+                        {% endfor %}
+        			</ul>
+        		</li>
+                <li class="dropdown">
+                    <a href="#" id="pro" class="dropdown-toggle navbar-brand" data-toggle="dropdown"><b
+                            style="font-size:20px;"><i class="material-icons" style="font-size: 25px;">arrow_drop_down_circle</i>&nbsp;PROFILE</b></a>
+                    <ul class="dropdown-menu">
+                        <li id="show_form"><a href="#AddPlant"><i class="material-icons">add_circle</i>&nbsp;&nbsp;Add
+                            Plant</a></li>
+                        <div id="form" class="forms">
+                            <center>
+                                <form method="Post" action="{% url 'Plant:addplant' name %}">
+                                    <p>Fill out the following form.</p>
+                                    <input id="box" placeholder="Plant Name" name="plant_name" required>
+                                    <input id="box" placeholder="Latitude" name="lat" required>
+                                    <input id="box" placeholder="Longitude" name="long" required>
+                                    <input type="submit" id="dologin" value="Add">
+                                </form>
+                            </center>
+                        </div>
+                        <li id="show_e_form"><a href="#Edit"><i class="material-icons">edit</i>&nbsp;&nbsp;Edit Profile</a></li>
+                        <div id="e-form" class="forms">
+                             <center>
+                                <form method="Post" action="{% url 'Plant:editUser' name %}">
+                                    <p>Fill out the following form.</p>
+                                    <input id="box" placeholder="Username" name="name" required>
+                                    <input type="email" id="box" placeholder="Email" name="email" required>
+                                    <input type="password" id="box" placeholder="Password" name="passwd" required>
+                                    <input type="submit" id="dologin" value="Change">
+                                </form>
+                            </center>
+                        </div>
+                        <li id="l3"><a href="#"><i class="material-icons">play_arrow</i>&nbsp;&nbsp;Manual control</a></li>
+                        <li id="l4"><a href="#"><i class="material-icons">help</i>&nbsp;&nbsp;Help ?</a></li>
+                        <li id="l5"><a href="{% url 'Plant:logout' %}"><i class="material-icons">power_settings_new</i>&nbsp;&nbsp;Log
+                            Out</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div id="blury">
+    <div class="wrapper">
+        <div class="header header-filter w3-animate-opacity"
+             style="background-image: url('{% static 'Plant/signup_login/assets/img/examples/forest.jpg' %}');"></div>
+        <div class="main main-raised">
+            <div class="profile-content">
+                <div class="container">
+                    <div class="row">
+                        <div class="profile">
+                            <div class="avatar w3-animate-top" style="animation: animatetop 1.0s;">
+                                <img src="{% static 'Plant/signup_login/assets/img/logo.png' %}" alt="Circle Image"
+                                     class="img-circle img-responsive img-raised">
+                            </div>
+                            <div class="name">
+                                <h3 class="title"> {{name}} </h3>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-success">
+                        <div class="container-fluid">
+                            <div class="alert-icon">
+                                <i class="material-icons">check</i>
+                            </div>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true"><i class="material-icons">clear</i></span>
+                            </button>
+                            <b>Success Alert:</b> Yuhuuu! You've successfully logged in !!!
+                        </div>
+                    </div>
+
+                    {% if add %}
+                        <div class="alert alert-success active">
+                        <div class="container-fluid">
+                            <div class="alert-icon">
+                                <i class="material-icons">check</i>
+                            </div>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true"><i class="material-icons">clear</i></span>
+                            </button>
+                            <b>Success Alert:</b> Plant is added successfully !!!
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <div class="alert alert-success" id="alert" style="display:none;">
+                        <div class="container-fluid">
+                            <div class="alert-icon">
+                                <i class="material-icons">check</i>
+                            </div>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="false"><i class="material-icons">clear</i></span>
+                            </button>
+                            <b>*</b> Yuhuuu! you've got enough water.
+                        </div>
+                    </div>
+
+                    <div class="alert alert-warning" id="warning" style="display:none;">
+                        <div class="container-fluid">
+                            <div class="alert-icon">
+                                <i class="material-icons">warning</i>
+                            </div>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true"><i class="material-icons">clear</i></span>
+                            </button>
+                            <b>Warning Alert:</b> Hey, water is less than 50% .
+                        </div>
+                    </div>
+
+                    <div class="alert alert-danger active" id="danger" style="display:none;">
+                        <div class="container-fluid">
+                            <div class="alert-icon">
+                                <i class="material-icons">error_outline</i>
+                            </div>
+                            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                <span aria-hidden="true"><i class="material-icons">clear</i></span>
+                            </button>
+                            <b>Error Alert:</b> oh man! Tank is almost empty.
+                        </div>
+                    </div>
+
+                     <center><div style="width:400px;background-color:#bdbdbd;display:none;" id="manualc" >
+                        <div class="togglebutton">
+                            <label>
+                                <input type="checkbox" checked="">
+                                    Toggle is on
+                            </label>
+                        </div>
+                        <br>
+                        <div class="togglebutton">
+                            <label>
+                                <input type="checkbox">
+                                    Toggle is off
+                            </label>
+                        </div>
+                    </div>
+                    </center>
+
+                    <h2> WATER-TANK GRAPH </h2><br>
+
+                    <center>
+                        <div id="WaterLevel_chart" style="width: 900px; height: 500px"></div>
+                    </center>
+
+                    <h2> RAINFALL GRAPH </h2><br>
+                    <center>
+                    <div id="rain_graph" style="width: 900px; height: 500px"></div>
+                    </center>
+
+                    <h2>MAP</h2><br>
+                    <center>
+                        <div id="mapCanvas" style="height:400px;width:800px;"></div>
+                    </center>
+                </div>
+                <script>
+            function notify(){
+
+                {% for s in water_list%}
+                    e = {{s.level}};
+                {%endfor%}
+
+                var x = document.getElementById("alert");
+                var y = document.getElementById("warning");
+                var z = document.getElementById("danger");
+
+                if (e > 70){
+                    x.style.display = "block";
+                    y.style.display = "none";
+                    z.style.display = "none";
+                }
+                else if (70 > e && e > 40) {
+                    x.style.display = "none";
+                    y.style.display = "block";
+                    z.style.display = "none";
+                }
+                else {
+                    x.style.display = "none";
+                    y.style.display = "none";
+                    z.style.display = "block";
+                }
+            }
+
+                </script>
+                <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAwXuXd8dL1d5rAOftiuQ9zPKrZbRztfc0&callback=initMap"
+                        async defer></script>
+                <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
+                <script>
+                var flag = 0;
+                var flag1 = 0;
+                var bool = 0;
+                var man = getElementById('manualc');
+                $("#form").css({"display":"none"});
+                $("#e-form").css({"display":"none"});
+				$(document).ready(function()
+				{
+ 				$("#show_form").on('click',function(){
+   					showpopup();
+   					flag = 1;
+   					return false;
+ 				});
+ 				$("#show_e_form").on('click',function(){
+   					show_e_form();
+   					flag1 = 1;
+   					return false;
+ 				});
+ 				$("#blury").on('click',function(){
+  					hidepopup();
+  					hide_e_form();
+  					flag=0;
+  					flag1=0;
+ 				});
+ 				$("#pro").on('click',function(){
+  					if (flag == 1 || flag1 ==1){
+  					    hide_e_form();
+  					    hidepopup();
+  					    flag1=0;
+  					    flag=0;
+  					}
+ 				});
+ 				$("#l3").on('click',function(){
+  					if(bool == 0){
+  					    $("#l3").html('<a href="#"><i class="material-icons">pause_circle_filled</i>&nbsp;&nbsp;Manual control</a>');
+  					    bool=1;
+                        man.style.display = "block";
+  					}
+  					else{
+  					    $("#l3").html('<a href="#"><i class="material-icons">play_arrow</i>&nbsp;&nbsp;Manual control</a>');
+  					    bool=0;
+                        man.style.display = "none";
+  					}
+ 				});
+				});
+
+				function showpopup()
+				{
+				 $("#blury").css({"-webkit-filter": "blur(5px)",
+								  "-moz-filter": "blur(5px)",
+								  "-o-filter": "blur(5px)",
+								  "-ms-filter": "blur(5px)",
+								  "filter": "blur(2px) grayscale(90%)"});//grayscale(100%) opacity(50%)
+
+				 $("#form").slideDown('slow');
+
+				 $("#form").css({"display":"block"});
+				 $("#show_form").css({"display":"none"});
+				 $("#show_e_form").css({"display":"none"});
+				 $("#l3").css({"display":"none"});
+				 $("#l4").css({"display":"none"});
+				 $("#l5").css({"display":"none"});
+				}
+
+				function hidepopup()
+				{
+				 $("#blury").css({"-webkit-filter": "blur(0px)",
+								  "-moz-filter": "blur(0px)",
+								  "-o-filter": "blur(0px)",
+								  "-ms-filter": "blur(0px)",
+								  "filter": "blur(0px)"});
+				 $("#form").fadeOut();
+				 $("#form").css({"display":"none"});
+				 $("#show_form").css({"display":"block"});
+				 $("#lshow_e_form").css({"display":"block"});
+				 $("#l3").css({"display":"block"});
+				 $("#l4").css({"display":"block"});
+				 $("#l5").css({"display":"block"});
+				}
+                function show_e_form()
+				{
+				 $("#blury").css({"-webkit-filter": "blur(5px)",
+								  "-moz-filter": "blur(5px)",
+								  "-o-filter": "blur(5px)",
+								  "-ms-filter": "blur(5px)",
+								  "filter": "blur(2px) grayscale(90%)"});//grayscale(100%) opacity(50%)
+
+				 $("#e-form").slideDown('slow');
+
+				 $("#e-form").css({"display":"block"});
+				 $("#show_form").css({"display":"none"});
+				 $("#show_e_form").css({"display":"none"});
+				 $("#l3").css({"display":"none"});
+				 $("#l4").css({"display":"none"});
+				 $("#l5").css({"display":"none"});
+				}
+
+				function hide_e_form()
+				{
+				 $("#blury").css({"-webkit-filter": "blur(0px)",
+								  "-moz-filter": "blur(0px)",
+								  "-o-filter": "blur(0px)",
+								  "-ms-filter": "blur(0px)",
+								  "filter": "blur(0px)"});
+				 $("#e-form").fadeOut();
+				 $("#e-form").css({"display":"none"});
+				 $("#show_form").css({"display":"block"});
+				 $("#show_e_form").css({"display":"block"});
+				 $("#l3").css({"display":"block"});
+				 $("#l4").css({"display":"block"});
+				 $("#l5").css({"display":"block"});
+				}
+				function initMap() {
+				    var map;
+				    var bounds = new google.maps.LatLngBounds();
+				    var mapOptions = {
+				        mapTypeId: 'roadmap'
+				    };
+
+				    // Display a map on the web page
+				    map = new google.maps.Map(document.getElementById("mapCanvas"), mapOptions);
+				    map.setTilt(50);
+
+				    // Multiple markers location, latitude, and longitude
+				    var markers = [
+				    {% for plant in plant_list %}
+				        ['{{plant.plant_name}}', {{plant.lat}}, {{plant.lon}}],
+				    {% endfor %}
+				    ];
+
+				    // Info window content
+				    var infoWindowContent = [
+				    {% for plant in plant_list %}
+				        ['<div class="info_content">' +
+				        '<h3>Plant {{forloop.counter}}</h3>' +
+				        '<p>{{plant.plant_name}}</p>' + '</div>'],
+				    {% endfor %}
+				    ];
+
+				    // Add multiple markers to map
+				    var infoWindow = new google.maps.InfoWindow(), marker, i;
+
+				    // Place each marker on the map
+				    for( i = 0; i < markers.length; i++ ) {
+				        var position = new google.maps.LatLng(markers[i][1], markers[i][2]);
+				        bounds.extend(position);
+				        marker = new google.maps.Marker({
+				            position: position,
+				            map: map,
+				            title: markers[i][0]
+				        });
+
+				        // Add info window to marker
+				        google.maps.event.addListener(marker, 'click', (function(marker, i) {
+				            return function() {
+				                infoWindow.setContent(infoWindowContent[i][0]);
+				                infoWindow.open(map, marker);
+				            }
+				        })(marker, i));
+
+				        // Center the map to fit all markers on the screen
+				        map.fitBounds(bounds);
+				    }
+
+				    // Set zoom level
+				    var boundsListener = google.maps.event.addListener((map), 'bounds_changed', function(event) {
+				        this.setZoom(18);
+				        google.maps.event.removeListener(boundsListener);
+				    });
+
+				}
+				// Load initialize function
+				google.maps.event.addDomListener(window, 'load', initMap);
+
+                </script>
+
+            </div>
+        </div>
+        <div style="height=60px;">
+
+        </div>
+        <footer class="footer">
+            <div class="container">
+                <nav class="pull-left">
+                </nav>
+                <div class="copyright pull-right">
+
+                </div>
+            </div>
+        </footer>
+
+
+        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+        <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
+        <script type="text/javascript">
+
+    google.charts.load('current', {'packages':['corechart']});
+    var new_water,new_rain,flag0=0,flag2=0;      //variables
+
+    function fn(){
+       var spreadsheetId = "1eWo3wHLBqLJoJGAFkAqKp7AnmjwC2xOoP4V9qhmHuWc",
+    url = "https://spreadsheets.google.com/feeds/list/" +
+          spreadsheetId +
+          "/od6/public/basic?alt=json";
+
+var cs=$.get({
+  url: url,
+  success: function(response) {
+
+	var data1 = response.feed.entry;
+	new_water=parseFloat(data1[1].content.$t.replace('values: ', ''));
+	new_rain=parseFloat(data1[4].content.$t.replace('values: ', ''));
+
+  }
+});
+ }
+    google.charts.setOnLoadCallback(drawWaterLevelChart);
+    google.charts.setOnLoadCallback(drawRainChart);
+
+    function drawWaterLevelChart() {
+        var data = google.visualization.arrayToDataTable([
+          ['Time', 'Water Level'],
+          ['17',30]
+        ]);
+        data.removeRow(0);
+
+        {% for f in water_list%}
+            data.addRow(['17',{{f.level}}]);
+        {% endfor %}
+
+
+        var options = {
+          animation: {"startup": true,
+                      duration: 1000,
+                      easing: 'out',},
+          pointSize: 10,
+          pointShape: 'circle',
+          title: 'Water Level',
+          vAxis: {title: "Water Level"},
+          hAxis: {title: "Year"},
+          <!--lineWidth: 4,>
+          curveType: 'function',
+
+          legend: { position: 'top' },
+          colors: ['#1CD6FF']
+
+        };
+
+        var chart = new google.visualization.AreaChart(document.getElementById('WaterLevel_chart'));
+
+        var c1=0;
+        function fdraw(){
+		if(c1==1)
+		data.addRow(['17',new_water]);
+		chart.draw(data, options);
+        data.removeRow(0);
+		fn();
+		c1=1;
+        }
+        fdraw();
+
+
+  window.setInterval(fdraw, 3000);
+
+
+ }
+
+      function drawRainChart() {
+        var data = google.visualization.arrayToDataTable([
+          ['Time', 'Rain level'],
+          ['17',30]
+        ]);
+        data.removeRow(0);
+
+        {% for f in rain_list%}
+            data.addRow(['17',{{f.r_level}}]);
+        {% endfor %}
+
+
+        var options = {
+          animation: {"startup": true,
+                      duration: 1000,
+                      easing: 'out',},
+          pointSize: 10,
+          pointShape: 'circle',
+          title: 'Rain Level',
+          vAxis: {title: "Rain Level"},
+          hAxis: {title: "Year"},
+          <!--lineWidth: 4,>
+          curveType: 'function',
+
+          legend: { position: 'top' },
+          colors: ['#1CD6FF']
+
+        };
+
+        var chart = new google.visualization.AreaChart(document.getElementById('rain_graph'));
+
+        var c2=0;
+        function fdraw(){
+		if(c2==1)
+		data.addRow(['17',new_rain]);
+		chart.draw(data, options);
+        data.removeRow(0);
+		c2=1;
+        }
+        fdraw();
+
+
+  window.setInterval(fdraw, 3000);
+      }
+
+
+        </script>
+    </div>
+    </div>
+</body>
+<!--   Core JS Files   -->
+
+<script src="{% static 'Plant/signup_login/assets/js/bootstrap.min.js' %}" type="text/javascript"></script>
+<script src="{% static 'Plant/signup_login/assets/js/material.min.js' %}"></script>
+
+<!--  Plugin for the Sliders, full documentation here: http://refreshless.com/nouislider/ -->
+<script src="{% static 'Plant/signup_login/assets/js/nouislider.min.js' %}" type="text/javascript"></script>
+
+<!--  Plugin for the Datepicker, full documentation here: http://www.eyecon.ro/bootstrap-datepicker/ -->
+<script src="{% static 'Plant/signup_login/assets/js/bootstrap-datepicker.js' %}" type="text/javascript"></script>
+
+<script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false&amp;language=en"></script>
+
+<!-- Control Center for Material Kit: activating the ripples, parallax effects, scripts from the example pages etc -->
+<script src="{% static 'Plant/signup_login/assets/js/material-kit.js' %}" type="text/javascript"></script>
+
+</html>

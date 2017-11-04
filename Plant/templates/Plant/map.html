@@ -1,0 +1,90 @@
+
+<html>
+
+<head>
+
+    <style>
+    #mapCanvas {
+        width: 700px;
+        height: 300px;
+    }
+    </style>
+
+</head>
+
+<body>
+    <div id="mapCanvas"></div>
+
+
+
+
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAwXuXd8dL1d5rAOftiuQ9zPKrZbRztfc0&callback=initMap"async defer></script>
+<script>
+function initMap() {
+    var map;
+    var bounds = new google.maps.LatLngBounds();
+    var mapOptions = {
+        mapTypeId: 'roadmap'
+    };
+
+    // Display a map on the web page
+    map = new google.maps.Map(document.getElementById("mapCanvas"), mapOptions);
+    map.setTilt(50);
+
+    // Multiple markers location, latitude, and longitude
+    var markers = [
+        ['Plant 1', 13.557075, 80.025120],
+        ['PLant 2', 13.556997, 80.025321],
+    ];
+
+    // Info window content
+    var infoWindowContent = [
+        ['<div class="info_content">' +
+        '<h3>PLant 1</h3>' +
+        '<p>Marigold Plant</p>' + '</div>'],
+        ['<div class="info_content">' +
+        '<h3>Plant 2</h3>' +
+        '<p>Orchid Plant</p>' +
+        '</div>'],
+    ];
+
+    // Add multiple markers to map
+    var infoWindow = new google.maps.InfoWindow(), marker, i;
+
+    // Place each marker on the map
+    for( i = 0; i < markers.length; i++ ) {
+        var position = new google.maps.LatLng(markers[i][1], markers[i][2]);
+        bounds.extend(position);
+        marker = new google.maps.Marker({
+            position: position,
+            map: map,
+            title: markers[i][0]
+        });
+
+        // Add info window to marker
+        google.maps.event.addListener(marker, 'click', (function(marker, i) {
+            return function() {
+                infoWindow.setContent(infoWindowContent[i][0]);
+                infoWindow.open(map, marker);
+            }
+        })(marker, i));
+
+        // Center the map to fit all markers on the screen
+        map.fitBounds(bounds);
+    }
+
+    // Set zoom level
+    var boundsListener = google.maps.event.addListener((map), 'bounds_changed', function(event) {
+        this.setZoom(18);
+        google.maps.event.removeListener(boundsListener);
+    });
+
+}
+// Load initialize function
+google.maps.event.addDomListener(window, 'load', initMap);
+</script>
+</script>
+
+</body>
+</html>

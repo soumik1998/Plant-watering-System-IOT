@@ -1,0 +1,143 @@
+from datetime import datetime
+from django.conf import settings
+from django.shortcuts import render, HttpResponseRedirect, reverse, HttpResponse
+from django.utils.datastructures import MultiValueDictKeyError
+from django.core.mail import send_mail, BadHeaderError
+from .models import Plants, User
+
+'''This function is to get data from Raspberrypi and to store in Django database.'''
+
+
+def getdata(request):
+    temp = request.GET['t']
+    level = request.GET['cm']
+    moisture = request.GET['m']
+    uid = request.GET['uid']
+    act = request.GET['act']
+    i = request.GET['id']
+    user = User.objects.get(name=uid)
+    plant = Plants.objects.filter(plant_name=i, uid=user.uid)
+    obj = plant.temp_set.create()
+    obj.temp = temp
+    obj.dt = datetime.now()
+    obj.save()
+    obj = user.water_set.create()
+    obj.level = level
+    obj.dt = datetime.now()
+    obj.save()
+    obj = plant.soil_set.create()
+    obj.m_level = moisture
+    obj.dt = datetime.now()
+    obj.save()
+    obj = plant.actuator_set.create()
+    obj.status = act
+    obj.dt = datetime.now()
+    obj.save()
+
+    return HttpResponse('this is a get request')
+
+'''This function is to register user in the web-app'''
+
+
+def signup(request):
+    return render(request, 'Plant/signup-page.html', {})
+
+'''This function is to Log user in the web-app'''
+
+
+def login(request):
+    return render(request, 'Plant/login-page.html', {})
+
+'''This function is takes values from sign-in page and makes a user object in django database'''
+
+
+def makeUser(request):
+    try:
+        alluser = User.objects.all()
+        uobj = User()
+        uobj.name = '_'.join(request.POST['name'].spilt())
+        uobj.email = request.POST['email']
+        for user in alluser:
+            if user.email == uobj.email:
+                return render(request, 'Plant/signup-page.html', {'error': 'error'})
+        uobj.password = request.POST['password']
+        uobj.save()
+        return render(request, 'Plant/profile-page.html', {'name': uobj.name})
+    except MultiValueDictKeyError:
+        return render(request, 'Plant/error-page.html', {})
+
+'''This function is to log user in after checking whether the email-id and password is valid'''
+
+
+def userprofile(request):
+    try:
+        st = request.POST['email']
+        pt = request.POST['password']
+        allusers = User.objects.all()
+        for users in allusers:
+            if users.email == st and users.password == pt:
+                plant_list = users.plants_set.order_by('dt')[:10]
+                water_list = users.water_set.order_by('dt')[:10]
+                rain_list = users.rain_set.order_by('dt')[:10]
+                return render(request, 'Plant/profile-page.html',
+                              {'name': users.name, 'plant_list': plant_list, 'water_list': water_list,
+                               'rain_list': rain_list})
+        return render(request, 'Plant/login-page.html', {'error': 'Invalid email-id or password', })
+    except MultiValueDictKeyError:
+        return render(request, 'Plant/error-page.html', {})
+
+'''This function is to reload the profile page of user.'''
+
+
+def home(request, name):
+    if name is not None:
+        uobj = User.objects.get(name=name)
+        plant_list = uobj.plants_set.order_by('dt')[:10]
+        water_list = uobj.water_set.order_by('dt')[:10]
+        rain_list = uobj.rain_set.order_by('dt')[:10]
+        return render(request, 'Plant/profile-page.html',
+                      {'name': name, 'plant_list': plant_list, 'water_list': water_list, 'rain_list': rain_list})
+
+'''This function is to log user out to the landing page.'''
+
+
+def logout(request):
+    return HttpResponseRedirect(reverse('Plant:login'))
+
+'''This function is to go to respective plant page after user has selected the plant in plant list.'''
+
+
+def userPlants(request, name, plant_name):
+    user = User.objects.get(name=name)
+    plant = Plants.objects.get(plant_name=plant_name, uid=user.id)
+    temp_list = plant.temp_set.order_by('dt')[:10]
+    soil_list = plant.soil_set.order_by('dt')[:10]
+    return render(request, 'Plant/graph_sensor_values.html', {'temp_list': temp_list, 'soil_list': soil_list})
+
+'''This function is to add a plant give by the user in profile page.'''
+
+
+def addplant(request, name):
+    uobj = User.objects.get(name=name)
+    water_list = uobj.water_set.order_by('dt')[:10]
+    rain_list = uobj.rain_set.order_by('dt')[:10]
+    plant_name = request.POST['plant_name']
+    lat = request.POST['lat']
+    long = request.POST['long']
+    plant = uobj.plants_set.create(plant_name=plant_name, lat=lat, lon=long)
+    plant.save()
+    return render(request, 'Plant/profile-page.html', {'name': name, 'add': 'add',
+                                                       'water_list': water_list, 'rain_list': rain_list})
+
+'''This function is to edit the parameters of user such as username, email-id and password.'''
+
+
+def editUser(request, name):
+    user = User.objects.get(name=name)
+    user.name = request.POST['name']
+    user.email = request.POST['email']
+    user.password = request.POST['passwd']
+    water_list = user.water_set.order_by('dt')[:10]
+    rain_list = user.rain_set.order_by('dt')[:10]
+    return render(request, 'Plant/profile-page.html', {'name': name, 'water_list': water_list, 'rain_list': rain_list})
+
