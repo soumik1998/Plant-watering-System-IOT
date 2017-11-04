@@ -183,17 +183,17 @@
                     </div>
 
                      <center><div style="width:400px;background-color:#bdbdbd;display:none;" id="manualc" >
-                        <div class="togglebutton">
+                        <div class="togglebutton" >
                             <label>
-                                <input type="checkbox" checked="">
-                                    Toggle is on
+                                <input type="checkbox" onclick="update_value1()">
+                                    Actuator for Marigold
                             </label>
                         </div>
                         <br>
-                        <div class="togglebutton">
+                        <div class="togglebutton" >
                             <label>
-                                <input type="checkbox">
-                                    Toggle is off
+                                <input type="checkbox" onclick="update_value2()">
+                                    Actuator for Orchid
                             </label>
                         </div>
                     </div>
@@ -213,6 +213,7 @@
                     <h2>MAP</h2><br>
                     <center>
                         <div id="mapCanvas" style="height:400px;width:800px;"></div>
+                        <br><br>
                     </center>
                 </div>
                 <script>
@@ -248,10 +249,47 @@
                         async defer></script>
                 <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
                 <script>
+                var script_url = "https://script.google.com/a/iiits.in/macros/s/AKfycbzhRUGSa6QVWGzPtOHSepJD2B0Y_jejiS8QFei8699aaILC_gr_/exec";
+                var id="m",value1=0,value2=0,valuem=0;
+              // Make an AJAX call to Google Script
+
+                  function update_value1(){
+                    value1=(value1+1)%2;
+                    var url = script_url+"?callback=ctrlq&name="+value1+"&id=a1&action=update";
+                    var request = jQuery.ajax({
+                      crossDomain: true,
+                      url: url ,
+                      method: "GET",
+                      dataType: "jsonp"
+                    });
+
+                  }
+                  function update_value2(){
+                    value2=(value2+1)%2;
+                    var url = script_url+"?callback=ctrlq&name="+value2+"&id=a2&action=update";
+                    var request = jQuery.ajax({
+                      crossDomain: true,
+                      url: url ,
+                      method: "GET",
+                      dataType: "jsonp"
+                    });
+
+                  }
+                  function update_valuem(){
+                    valuem=(valuem+1)%2;
+                    var url = script_url+"?callback=ctrlq&name="+valuem+"&id=m&action=update";
+                    var request = jQuery.ajax({
+                      crossDomain: true,
+                      url: url ,
+                      method: "GET",
+                      dataType: "jsonp"
+                    });
+
+                  }
+
                 var flag = 0;
                 var flag1 = 0;
                 var bool = 0;
-                var man = getElementById('manualc');
                 $("#form").css({"display":"none"});
                 $("#e-form").css({"display":"none"});
 				$(document).ready(function()
@@ -284,12 +322,14 @@
   					if(bool == 0){
   					    $("#l3").html('<a href="#"><i class="material-icons">pause_circle_filled</i>&nbsp;&nbsp;Manual control</a>');
   					    bool=1;
-                        man.style.display = "block";
+  					    update_valuem();
+                        $("#manualc").css({"display":"block"});
   					}
   					else{
   					    $("#l3").html('<a href="#"><i class="material-icons">play_arrow</i>&nbsp;&nbsp;Manual control</a>');
   					    bool=0;
-                        man.style.display = "none";
+  					    update_valuem();
+                        $("#manualc").css({"display":"none"});
   					}
  				});
 				});
@@ -364,7 +404,7 @@
 				    var map;
 				    var bounds = new google.maps.LatLngBounds();
 				    var mapOptions = {
-				        mapTypeId: 'roadmap'
+				        mapTypeId: 'hybrid' //property, hybrid or traffic or satelite
 				    };
 
 				    // Display a map on the web page
