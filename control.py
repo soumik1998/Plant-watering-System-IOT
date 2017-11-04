@@ -66,21 +66,21 @@ while True:
             
     else : 
         if (rusky[2] < 20 && Motor1_s == 0):
-            print "Turning motor 1 on "
+            print("Turning motor 1 on")
             GPIO.output(Motor1A,GPIO.HIGH)
             Motor1_s = 1
         elif (rusky[2] >= 20 && Motor1_s == 1):
-            print "Stopping motor 1"
+            print("Stopping motor 1")
             GPIO.output(Motor1A,GPIO.LOW)
             Motor1_s = 0
             
             
         if (rusky[3] < 20 && Motor2_s == 0):
-            print "Turning motor 1 on"
+            print("Turning motor 2 on")
             GPIO.output(Motor1B,GPIO.HIGH)
             Motor2_s = 1
         elif (rusky[3] >= 20 && Motor2_s == 1):
-            print "Stopping motor 2"
+            print("Stopping motor 2")
             GPIO.output(Motor1B,GPIO.LOW)
             Motor2_s = 0
 
