@@ -123,7 +123,8 @@
     <script type="text/javascript">
       google.charts.load('current', {'packages':['corechart']});
 
-      var new_temp,new_moist,flag0=0,flag2=0,po=2,x=0,c;
+      var new_temp,old_temp,new_moist,old_moist,flag0=0,flag2=0,po=2,x=0,c;
+      old_temp=old_moist=parseFloat(0);
       {% for q in soil_list%}
             if(x==0)
               x=x+1;
@@ -149,16 +150,16 @@ var cs=$.get({
  }
       google.charts.setOnLoadCallback(drawTempChart);
       google.charts.setOnLoadCallback(drawSoilMoistureChart);
-      
+
       function drawTempChart() {
         var data = google.visualization.arrayToDataTable([
-          ['Year', 'Temperature'],
+          ['Timeline', 'Temperature'],
           ['17',30]
         ]);
         data.removeRow(0);
 
         {% for temps in temp_list %}
-            data.addRow(['17',{{temps.temp}}]);
+            data.addRow([' ',{{temps.temp}}]);
         {% endfor %}
 
 
@@ -170,7 +171,7 @@ var cs=$.get({
           pointShape: 'circle',
           title: 'Recent Temperature',
           vAxis: {title: "Temperature"},
-          hAxis: {title: "Year"},
+          hAxis: {title: "Timeline->"},
           <!--lineWidth: 4,>
           <!--curveType: 'function',>
 
@@ -182,10 +183,14 @@ var cs=$.get({
 
         var c1=0;
         function fdraw(){
-		if(c1==1)
-		data.addRow(['17',new_temp]);
-		chart.draw(data, options);
-        data.removeRow(0);
+		if(c1==1 && new_temp!=old_temp){
+		 data.removeRow(0);
+		 data.addRow([' ',new_temp]);
+		 old_temp=new_temp;
+		 c1=0;
+		}
+		if(c1==0)chart.draw(data, options);
+
 		fn();
 		c1=1;
         }
@@ -203,8 +208,8 @@ var cs=$.get({
 
       function drawSoilMoistureChart() {
         var data = google.visualization.arrayToDataTable([
-          ['Time', 'Soil Moisture'],
-          ['17',30]
+          ['Timeline', 'Soil Moisture'],
+          [' ',30]
         ]);
         data.removeRow(0);
 
@@ -221,7 +226,7 @@ var cs=$.get({
           pointShape: 'circle',
           title: 'Soil Moisture',
           vAxis: {title: "Soil Moisture"},
-          hAxis: {title: "Year"},
+          hAxis: {title: "Timeline->"},
           <!--lineWidth: 4,>
           <!--curveType: 'function',>
 
@@ -233,10 +238,13 @@ var cs=$.get({
 
         var c2=0;
         function fdraw(){
-		if(c2==1)
-		data.addRow(['17',new_moist]);
-		chart.draw(data, options);
-        data.removeRow(0);
+		if(c2==1 && new_moist!=old_moist){
+		 data.removeRow(0);
+		 data.addRow([' ',new_moist]);
+		 old_moist=new_moist;
+		 c2=0;
+		}
+		if(c2==0)chart.draw(data, options);
 		c2=1;
         }
         fdraw();
@@ -246,7 +254,7 @@ var cs=$.get({
 
       }
 
-      
+
 
     </script>
 

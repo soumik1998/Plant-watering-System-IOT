@@ -119,4 +119,4 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-STATIC_ROOT = "/Project_16/Plant/static/"
+STATIC_ROOT = "/home/smgroup16/Plant-watering-System-IOT/Project_16/Plant/static/"

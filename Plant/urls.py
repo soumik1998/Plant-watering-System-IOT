@@ -6,6 +6,7 @@ app_name = 'Plant'
 urlpatterns = [url(r'^send/$', views.getdata, name='getdata'),
                url(r'^makeUser/$', views.makeUser, name='makeUser'),
                url(r'^userProfile/$', views.userprofile, name='userProfile'),
+               url(r'home/$', views.home, name='home'),
                url(r'^home/(?P<name>\w+)/$', views.home, name='home'),
                url(r'^addplant/(?P<name>\w+)/$', views.addplant, name='addplant'),
                url(r'^userPlants/(?P<name>\w+)/(?P<plant_name>\w+)/$', views.userPlants, name='userPlants'),

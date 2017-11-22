@@ -6,6 +6,17 @@
     <link rel="apple-touch-icon" sizes="76x76" href="{% static 'Plant/signup_login/assets/img/apple-icon.png' %}">
     <link rel="icon" type="image/png" href="{% static 'Plant/signup_login/assets/img/favicon.png' %}">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
+	<!-- Loading third party fonts -->
+		<link href="http://fonts.googleapis.com/css?family=Roboto:300,400,700|" rel="stylesheet" type="text/css">
+		<link href="fonts/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+		<!-- Loading main css file -->
+		<link rel="stylesheet" href="style.css">
+
+		<!--[if lt IE 9]>
+		<script src="js/ie-support/html5.js"></script>
+		<script src="js/ie-support/respond.js"></script>
+		<![endif]-->
 
     <style>
       /* Always set the map height explicitly to define the size of the div
@@ -19,9 +30,66 @@
         margin: 10;
         padding: 0;
       }
-
-    </style>
-
+      .manualcard {
+            background: #fff;
+            border-radius: 2px;
+            display: inline-block;
+            margin: 1rem;
+            position: relative;
+            display: none;
+        }
+        .manual-card-button {
+            box-shadow: 0 19px 38px rgba(0, 0, 0, 0.30), 0 15px 12px rgba(0, 0, 0, 0.22);
+            width: 300px;
+            height: 400px;
+            overflow: scroll;
+        }
+	#wxWrap {
+    width: 350px;
+    background: #EEE; /* Old browsers */
+    background: -moz-linear-gradient(top, rgba(240,240,240,1) 0%, rgba(224,224,224,1) 100%); /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(240,240,240,1)), color-stop(100%,rgba(224,224,224,1))); /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top, rgba(240,240,240,1) 0%,rgba(224,224,224,1) 100%); /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top, rgba(240,240,240,1) 0%,rgba(224,224,224,1) 100%); /* Opera11.10+ */
+    background: -ms-linear-gradient(top, rgba(240,240,240,1) 0%,rgba(224,224,224,1) 100%); /* IE10+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f0f0f0', endColorstr='#e0e0e0',GradientType=0 ); /* IE6-9 */
+    background: linear-gradient(top, rgba(240,240,240,1) 0%,rgba(224,224,224,1) 100%); /* W3C */
+    padding: 2px 13px 2px 11px;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+}
+#wxIntro {
+    display: inline-block;
+    font: 14px/20px Arial,Verdana,sans-serif;
+    color: #666;
+    vertical-align: top;
+    padding-top: 9px;
+}
+#wxIcon {
+    display: inline-block;
+    width: 250px;
+    height: 250px;
+    margin: 4px 0 -1px 1px;
+    overflow: hidden;
+    background: url('http://l.yimg.com/a/lib/ywc/img/wicons.png') no-repeat 100px 0;
+}
+#wxIcon2 {
+    display: inline-block;
+    width: 34px;
+    height: 34px;
+    margin: 1px 6px 0 8px;
+    overflow: hidden;
+}
+#wxTemp {
+    display: inline-block;
+    font: 55px/28px Arial,Verdana,sans-serif;
+    color: Orange;
+    vertical-align: top;
+    padding-top: 5px;
+    margin-left: 0;
+}
+</style>
 
     <title>Profile Page</title>
 
@@ -38,9 +106,72 @@
     <link href="{% static 'Plant/signup_login/assets/css/css3w.css' %}" rel="stylesheet"/>
     <link href="{% static 'Plant/signup_login/assets/css/form.css' %}" rel="stylesheet">
 
+
 </head>
 
 <body class="profile-page">
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.1/jquery.min.js"></script>
+		<script type="text/javascript">
+		$(function(){
+
+			// Specify the ZIP/location code and units (f or c)
+			var loc = '55934829'; // or e.g. SPXX0050
+			var u = 'c';
+
+			var query = "SELECT item.condition FROM weather.forecast WHERE woeid='" + loc + "' AND u='" + u + "'";
+			var cacheBuster = Math.floor((new Date().getTime()) / 1200 / 1000);
+			var url = 'http://query.yahooapis.com/v1/public/yql?q=' + encodeURIComponent(query) + '&format=json&_nocache=' + cacheBuster;
+
+			window['wxCallback'] = function(data) {
+				var info = data.query.results.channel.item.condition;
+				$('#wxIcon').css({
+					backgroundPosition: '-' + (61 * info.code) + 'px 0'
+				}).attr({
+					title: info.text
+				});
+				$('#wxIcon2').append('<img src="http://l.yimg.com/a/i/us/we/52/' + info.code + '.gif" width="34" height="34" title="' + info.text + '" />');
+				$('#wxTemp').html(info.temp + '&deg;' + (u.toUpperCase()));
+			};
+
+			$.ajax({
+				url: url,
+				dataType: 'jsonp',
+				cache: true,
+				jsonpCallback: 'wxCallback'
+			});
+
+		});
+		</script>
+
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+		<script>
+
+		function getWeather(woeid, unit) {
+		var url = "http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20weather.forecast%20where%20woeid=" + woeid + " %20and%20u=%27" + unit +"%27&format=json&callback=cbfunc";
+		$.getScript(url, function(data) {  } );
+		}
+
+		window.cbfunc = function(data){
+		var forecast='';
+		forecast = "<br>" + data.query.results.channel.item.description + "<br>";
+		var wind_spped='';
+		wind_spped="<br>"+data.query.results.channel.wind.speed+"<br>";
+		var rain='';
+		rain=""+ data.query.results.channel.atmosphere.humidity+"";
+		var dir='';
+		dir= ""+data.query.results.channel.wind.direction+"";
+		$("#weather").append(forecast);
+		$("#wind_1").append(wind_spped);
+		$("#rain_p").append(rain);
+		$("#dir_1").append(dir);
+
+
+		};
+
+
+		getWeather(55934829, "c");
+
+		</script>
 <nav class="navbar navbar-transparent navbar-fixed-top navbar-color-on-scroll">
     <div class="container">
         <!-- Brand and toggle get grouped for better mobile display -->
@@ -63,7 +194,7 @@
         		</li>
                 <li class="dropdown">
                     <a href="#" id="pro" class="dropdown-toggle navbar-brand" data-toggle="dropdown"><b
-                            style="font-size:20px;"><i class="material-icons" style="font-size: 25px;">arrow_drop_down_circle</i>&nbsp;PROFILE</b></a>
+                            style="font-size:20px;"><i class="material-icons" style="font-size: 25px;">arrow_drop_down_circle</i>&nbsp;GO TO</b></a>
                     <ul class="dropdown-menu">
                         <li id="show_form"><a href="#AddPlant"><i class="material-icons">add_circle</i>&nbsp;&nbsp;Add
                             Plant</a></li>
@@ -82,10 +213,10 @@
                         <div id="e-form" class="forms">
                              <center>
                                 <form method="Post" action="{% url 'Plant:editUser' name %}">
-                                    <p>Fill out the following form.</p>
+                                    <p>Fill out the following form.<br>Leave the box empty if u don't want to change.<br>No changes occurs if u leave all the box empty.</p>
                                     <input id="box" placeholder="Username" name="name" required>
-                                    <input type="email" id="box" placeholder="Email" name="email" required>
-                                    <input type="password" id="box" placeholder="Password" name="passwd" required>
+                                    <input type="email" id="box" placeholder="Email" name="email">
+                                    <input type="password" id="box" placeholder="Password" name="passwd">
                                     <input type="submit" id="dologin" value="Change">
                                 </form>
                             </center>
@@ -97,6 +228,10 @@
                     </ul>
                 </li>
             </ul>
+            <div class="forecast-header">
+								&nbsp;<div class="day" id="demo"></div>
+                                <div class="month" id="demo1"></div>
+			</div> <!-- .forecast-header -->
         </div>
     </div>
 </nav>
@@ -131,6 +266,7 @@
                             <b>Success Alert:</b> Yuhuuu! You've successfully logged in !!!
                         </div>
                     </div>
+
 
                     {% if add %}
                         <div class="alert alert-success active">
@@ -182,22 +318,43 @@
                         </div>
                     </div>
 
-                     <center><div style="width:400px;background-color:#bdbdbd;display:none;" id="manualc" >
-                        <div class="togglebutton" >
-                            <label>
-                                <input type="checkbox" onclick="update_value1()">
-                                    Actuator for Marigold
-                            </label>
+                    <center>
+                    <div id="manualc" class="manualcard manual-card-button w3-animate-zoom" >
+                    {% for plant in plant_list %}
+                        <br><br>
+                        <div class="togglebutton" id={{forloop.counter}} >
+                            &nbsp;&nbsp;&nbsp;<label><input type="checkbox" onclick="update_value1()">Actuator for {{plant.plant_name}}</label>
                         </div>
                         <br>
-                        <div class="togglebutton" >
-                            <label>
-                                <input type="checkbox" onclick="update_value2()">
-                                    Actuator for Orchid
-                            </label>
-                        </div>
+                    {% endfor %}
                     </div>
                     </center>
+
+                    <center>
+                    <div class="forecast-table">
+					    <div class="container">
+					        <div class="forecast-container">
+						<div class="today forecast">
+
+							<table>
+                                 <tr><td>
+                                <div class="location"><h2><b>Sri City</b></h2></div>
+								<div class="degree">
+									<span id="wxTemp"><sup>o</sup>C</span>
+
+										<span id="wxIcon2" ></span>
+
+                                </div></td>
+                                     <td> &nbsp; &nbsp;&nbsp; </td>
+								<td><img src="{% static 'Weather/images/icon-umberella.png'%}" ><br><p id="rain_p"></p></td>
+								  <td> &nbsp; &nbsp;&nbsp; </td>
+                                     <td><img src="{%static 'Weather/images/icon-compass.png'%}" ><br><p id="dir_1"></p></td></tr>
+                                </table>
+
+
+						</div></div>
+						</div></div>
+                        </center>
 
                     <h2> WATER-TANK GRAPH </h2><br>
 
@@ -485,7 +642,8 @@
         <script type="text/javascript">
 
     google.charts.load('current', {'packages':['corechart']});
-    var new_water,new_rain,flag0=0,flag2=0;      //variables
+    var new_water,old_water,new_rain,old_rain,flag0=0,flag2=0;      //variables
+     old_water=old_rain=parseFloat(0);
 
     function fn(){
        var spreadsheetId = "1eWo3wHLBqLJoJGAFkAqKp7AnmjwC2xOoP4V9qhmHuWc",
@@ -510,12 +668,12 @@ var cs=$.get({
     function drawWaterLevelChart() {
         var data = google.visualization.arrayToDataTable([
           ['Time', 'Water Level'],
-          ['17',30]
+          [' ',30]
         ]);
         data.removeRow(0);
 
         {% for f in water_list%}
-            data.addRow(['17',{{f.level}}]);
+            data.addRow([' ',{{f.level}}]);
         {% endfor %}
 
 
@@ -526,8 +684,8 @@ var cs=$.get({
           pointSize: 10,
           pointShape: 'circle',
           title: 'Water Level',
-          vAxis: {title: "Water Level"},
-          hAxis: {title: "Year"},
+          vAxis: {title: "Water Level in %"},
+          hAxis: {title: "Timeline->"},
           <!--lineWidth: 4,>
           curveType: 'function',
 
@@ -540,10 +698,14 @@ var cs=$.get({
 
         var c1=0;
         function fdraw(){
-		if(c1==1)
-		data.addRow(['17',new_water]);
-		chart.draw(data, options);
-        data.removeRow(0);
+		if(c1==1 && new_water!=old_water){
+		 data.removeRow(0);
+		 data.addRow([' ',new_water]);
+		 old_water=new_water;
+		 c1=0;
+		}
+		if(c1==0)chart.draw(data, options);
+
 		fn();
 		c1=1;
         }
@@ -558,12 +720,12 @@ var cs=$.get({
       function drawRainChart() {
         var data = google.visualization.arrayToDataTable([
           ['Time', 'Rain level'],
-          ['17',30]
+          [' ',30]
         ]);
         data.removeRow(0);
 
         {% for f in rain_list%}
-            data.addRow(['17',{{f.r_level}}]);
+            data.addRow([' ',{{f.r_level}}]);
         {% endfor %}
 
 
@@ -575,7 +737,7 @@ var cs=$.get({
           pointShape: 'circle',
           title: 'Rain Level',
           vAxis: {title: "Rain Level"},
-          hAxis: {title: "Year"},
+          hAxis: {title: "Timeline->"},
           <!--lineWidth: 4,>
           curveType: 'function',
 
@@ -588,10 +750,13 @@ var cs=$.get({
 
         var c2=0;
         function fdraw(){
-		if(c2==1)
-		data.addRow(['17',new_rain]);
-		chart.draw(data, options);
-        data.removeRow(0);
+		if(c2==1 && new_rain!=old_rain){
+		 data.removeRow(0);
+		 data.addRow([' ',new_rain]);
+		 old_rain=new_rain;
+		 c2=0;
+		}
+		if(c2==0)chart.draw(data, options);
 		c2=1;
         }
         fdraw();
@@ -604,6 +769,9 @@ var cs=$.get({
         </script>
     </div>
     </div>
+	<script src="{% static 'Weather/assets/js/jquery-1.11.1.min.js' %}"></script>
+		<script src="{% static 'Weather/assets/js/plugins.js'%}"></script>
+		<script src="{% static 'Weather/assets/js/app.js'%}"></script>
 </body>
 <!--   Core JS Files   -->
 

@@ -1,0 +1,55 @@
+#blury{
+	-webkit-filter: blur(0px);
+  -moz-filter: blur(0px);
+  -o-filter: blur(0px);
+  -ms-filter: blur(0px);
+  filter: blur(0px);
+}
+
+.forms
+{
+ width:500px;
+ height:330px;
+ border-radius:3px;
+ box-shadow:0px 0px 10px 0px #424242;
+ background-image:url('../img/xx.jpg');
+ padding:10px;
+ box-sizing:border-box;
+ font-family:helvetica;
+ display:none;
+ position:relative;
+}
+
+#e-form p
+{
+ margin-top:40px;
+ font-size:22px;
+ color:#E6E6E6;
+}
+#form p
+{
+ margin-top:40px;
+ font-size:22px;
+ color:#E6E6E6;
+}
+#navigation-example #box
+{
+ color: black;
+ width:250px;
+ height:40px;
+ border:2px solid silver;
+ border-radius:3px;
+ padding:5px;
+}
+#dologin
+{
+ margin-left:5px;
+ margin-top:10px;
+ width:250px;
+ height:40px;
+ border:none;
+ border-radius:3px;
+ color:white;
+ background-color:#009688;
+ font-size:20px;
+}
